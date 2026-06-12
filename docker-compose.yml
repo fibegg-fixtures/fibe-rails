@@ -1,0 +1,145 @@
+x-app-env: &app-env
+  RAILS_ENV: development
+  RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_DIRECT_HOST: postgres
+  DB_DIRECT_PORT: "5432"
+  DB_USER: postgres
+  DB_PASS: ${DB_PASS:-postgres}
+  DB_NAME: fibe_rails
+  REDIS_URL: redis://redis:6379/1
+  AWS_ENDPOINT: http://minio:9000
+  AWS_ACCESS_KEY_ID: minio
+  AWS_SECRET_ACCESS_KEY: miniopassword
+  AWS_REGION: us-east-1
+  AWS_BUCKET: fibe-rails
+  COOKIE_SAMESITE: lax
+  COOKIE_SECURE: "false"
+  CORS_ALLOWED_ORIGINS: "*"
+  FRAME_ANCESTORS: "*"
+  CSP_MODE: "off"
+
+services:
+  postgres:
+    image: postgres:17.5
+    shm_size: 1gb
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    configs:
+      - source: postgres_config
+        target: /etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASS:-postgres}
+      POSTGRES_DB: fibe_rails_development
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:8.4-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniopassword
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  setup:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - storage:/rails/storage
+    command: bin/setup --skip-server
+    environment: *app-env
+    labels:
+      fibe.gg/repo_url: "https://github.com/fibegg/fibe-rails"
+      fibe.gg/dockerfile: "Dockerfile"
+      fibe.gg/branch: main
+      fibe.gg/source_mount: /rails
+      fibe.gg/env_file: env.example
+
+  app:
+    build: .
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - storage:/rails/storage
+    ports:
+      - "3000:3000"
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    command: bin/dev
+    environment: *app-env
+    labels:
+      fibe.gg/repo_url: "https://github.com/fibegg/fibe-rails"
+      fibe.gg/expose: "external:3000"
+      fibe.gg/dockerfile: "Dockerfile"
+      fibe.gg/branch: main
+      fibe.gg/source_mount: /rails
+      fibe.gg/env_file: env.example
+      fibe.gg/subdomain: "app"
+      fibe.gg/zerodowntime: "false"
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  storage:
+
+configs:
+  postgres_config:
+    content: |
+      listen_addresses = '*'
+      shared_buffers = 256MB
+      effective_cache_size = 1GB
+      maintenance_work_mem = 128MB
+      checkpoint_completion_target = 0.9
+      wal_buffers = 16MB
+      default_statistics_target = 100
+      random_page_cost = 1.1
+      effective_io_concurrency = 200
+      work_mem = 8MB
+      min_wal_size = 256MB
+      max_wal_size = 1GB
+      max_worker_processes = 2
+      max_parallel_workers_per_gather = 1
+      max_parallel_workers = 2
+      max_parallel_maintenance_workers = 1

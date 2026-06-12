@@ -1,0 +1,8 @@
+enforce_dependencies: false
+enforce_privacy: false
+
+metadata:
+  owner: "app"
+  description: "Sample pack — copy this directory to start a new bounded context for your business logic"
+
+dependencies: []

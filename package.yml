@@ -1,0 +1,6 @@
+enforce_dependencies: false
+enforce_privacy: false
+
+metadata:
+  owner: "app"
+  description: "Rails root package — Rails adapters, controllers, layouts, framework entrypoints"

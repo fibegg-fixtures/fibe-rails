@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+if [ "$1" == "./bin/rails" ] && [ "$2" == "server" ] || [ "$1" == "bin/dev" ] || [ "$1" == "bin/rails" ] && [ "$2" == "server" ]; then
+  bundle check || bundle install
+  ./bin/rails db:prepare 2>/dev/null || true
+fi
+
+exec "${@}"

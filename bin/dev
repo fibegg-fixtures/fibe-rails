@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+bin/rails tailwindcss:build
+bin/rails assets:verify
+
+exec bundle exec foreman start -f Procfile.dev "$@"

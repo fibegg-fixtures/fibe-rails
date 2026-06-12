@@ -1,0 +1,17 @@
+include:
+  - "**/*.{rb,rake,erb}"
+
+exclude:
+  - "{bin,node_modules,public,storage,tmp,vendor,coverage,db,log}/**/*"
+  - "spec/fixtures/**/*"
+
+package_paths:
+  - "packs/*"
+  - "."
+
+parallel: true
+cache: true
+cache_directory: tmp/cache/packwerk
+
+require:
+  - packwerk-extensions

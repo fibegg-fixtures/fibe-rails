@@ -1,0 +1,43 @@
+inherit_gem:
+  rubocop-shopify: rubocop.yml
+
+plugins:
+  - rubocop-factory_bot
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+
+AllCops:
+  Exclude:
+    - 'app/javascript/**/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'db/**/*'
+    - 'packs/*/app/views/**/*'
+
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+Lint/MissingCopEnableDirective:
+  Enabled: false
+Naming/PredicatePrefix:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
+RSpec/InstanceVariable:
+  Enabled: false
+RSpec/IndexedLet:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+RSpec/NamedSubject:
+  Enabled: false
+RSpec/DescribeMethod:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: false
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+Rails/UnknownEnv:
+  Enabled: false

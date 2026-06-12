@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "fileutils"
+require "net/http"
+require "uri"
+
+version = ARGV.fetch(0) do
+  abort("Usage: bin/update-basecoat VERSION")
+end
+
+root = File.expand_path("..", __dir__)
+package_url = "https://cdn.jsdelivr.net/npm/basecoat-css@#{version}/dist"
+targets = {
+  "#{package_url}/basecoat.css" => "vendor/stylesheets/basecoat.css",
+  "#{package_url}/js/all.min.js" => "vendor/javascript/basecoat.js",
+}
+
+def fetch!(url)
+  uri = URI(url)
+  response = Net::HTTP.get_response(uri)
+  abort("Failed to download #{url}: #{response.code}") unless response.is_a?(Net::HTTPSuccess)
+
+  response.body
+end
+
+targets.each do |url, relative_path|
+  path = File.join(root, relative_path)
+  FileUtils.mkdir_p(File.dirname(path))
+  File.write(path, fetch!(url))
+  puts("Updated #{relative_path}")
+end
+
+version_path = File.join(root, "vendor/basecoat/VERSION")
+FileUtils.mkdir_p(File.dirname(version_path))
+File.write(version_path, "#{version}\n")
+puts("Basecoat #{version}")

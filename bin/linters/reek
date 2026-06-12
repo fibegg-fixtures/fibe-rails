@@ -1,0 +1,2 @@
+#!/bin/bash
+exec bundle exec reek --no-color "$@"

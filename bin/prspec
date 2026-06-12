@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export SILENT_TESTS=${SILENT_TESTS:-}
+
+OPTS=""
+FILES=""
+for arg in "$@"; do
+  if [[ "$arg" == -* ]]; then
+    OPTS="$OPTS $arg"
+  else
+    FILES="$FILES $arg"
+  fi
+done
+
+if [ -z "$FILES" ]; then
+  FILES="spec"
+fi
+
+echo "Running Parallel RSpec with options: $OPTS"
+
+bundle exec parallel_rspec --serialize-stdout --test-options "$FORMATTER$OPTS" $FILES

@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+bin/rails tailwindcss:build
+bin/rails assets:verify
+exec ./bin/check --parallel=rspec,flog,flay,rubocop,brakeman,bundler-audit,reek,packwerk

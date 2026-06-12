@@ -1,0 +1,3 @@
+#!/bin/bash
+bundle exec bundle-audit update >/dev/null 2>&1 || true
+exec bundle exec bundle-audit check --config config/bundler-audit.yml "$@"
