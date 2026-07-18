@@ -6,7 +6,7 @@ RSpec.describe("Home") do
   it "renders the Phlex home page" do
     get("/")
     expect(response).to(have_http_status(:ok))
-    expect(response.body).to(include("Fibe Rails Playground — Poll Sync"))
+    expect(response.body).to(include("Fibe Rails Playground"))
     expect(response.body).to(include("\"basecoat\""))
     expect(response.body).to(include("Basecoat UI + Tailwind CSS"))
     expect(response.body).to(include("class=\"card\""))

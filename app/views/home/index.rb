@@ -12,7 +12,7 @@ module Views
                 span(class: "badge-secondary") { "Basecoat UI" }
                 span(class: "badge-outline") { "Hotwire" }
               end
-              h1(class: "text-3xl font-semibold tracking-tight sm:text-4xl") { "Fibe Rails Playground — Poll Sync" }
+              h1(class: "text-3xl font-semibold tracking-tight sm:text-4xl") { "Fibe Rails Playground" }
               p(class: "max-w-2xl text-muted-foreground") do
                 plain("Edit ")
                 kbd(class: "kbd") { "app/views/home/index.rb" }
