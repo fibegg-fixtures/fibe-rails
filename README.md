@@ -19,7 +19,7 @@ Minimal Rails 8 starter for [fibe](https://github.com/fibegg/fibe) **Charge Play
 ## Quick start
 
 ```bash
-git clone https://github.com/fibegg/fibe-rails
+git clone https://github.com/fibegg-fixtures/fibe-rails
 cd fibe-rails
 docker compose up
 ```

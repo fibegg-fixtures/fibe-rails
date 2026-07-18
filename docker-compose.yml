@@ -20,6 +20,10 @@ x-app-env: &app-env
   FRAME_ANCESTORS: "*"
   CSP_MODE: "off"
 
+x-fibe.gg:
+  metadata:
+    preserve_ports: true
+
 services:
   postgres:
     image: postgres:17.5
@@ -78,11 +82,14 @@ services:
       minio:
         condition: service_healthy
     volumes:
+      - rails_tmp:/rails/tmp
+      - rails_log:/rails/log
+      - rails_assets_builds:/rails/app/assets/builds
       - storage:/rails/storage
     command: bin/setup --skip-server
     environment: *app-env
     labels:
-      fibe.gg/repo_url: "https://github.com/fibegg/fibe-rails"
+      fibe.gg/repo_url: "https://github.com/fibegg-fixtures/fibe-rails"
       fibe.gg/dockerfile: "Dockerfile"
       fibe.gg/branch: main
       fibe.gg/source_mount: /rails
@@ -100,6 +107,9 @@ services:
       minio:
         condition: service_healthy
     volumes:
+      - rails_tmp:/rails/tmp
+      - rails_log:/rails/log
+      - rails_assets_builds:/rails/app/assets/builds
       - storage:/rails/storage
     ports:
       - "3000:3000"
@@ -109,19 +119,23 @@ services:
     command: bin/dev
     environment: *app-env
     labels:
-      fibe.gg/repo_url: "https://github.com/fibegg/fibe-rails"
-      fibe.gg/expose: "external:3000"
+      fibe.gg/repo_url: "https://github.com/fibegg-fixtures/fibe-rails"
+      fibe.gg/port: "3000"
+      fibe.gg/visibility: "external"
       fibe.gg/dockerfile: "Dockerfile"
       fibe.gg/branch: main
       fibe.gg/source_mount: /rails
       fibe.gg/env_file: env.example
-      fibe.gg/subdomain: "app"
+      fibe.gg/subdomain: "fibe-rails"
       fibe.gg/zerodowntime: "false"
 
 volumes:
   postgres_data:
   redis_data:
   minio_data:
+  rails_tmp:
+  rails_log:
+  rails_assets_builds:
   storage:
 
 configs:
