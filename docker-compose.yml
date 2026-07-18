@@ -1,5 +1,6 @@
 x-app-env: &app-env
   RAILS_ENV: development
+  BUNDLE_FROZEN: "true"
   RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
   DB_HOST: postgres
   DB_PORT: "5432"
