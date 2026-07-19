@@ -75,6 +75,7 @@ services:
 
   setup:
     build: .
+    working_dir: /rails
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,11 +94,11 @@ services:
       fibe.gg/repo_url: "https://github.com/fibegg-fixtures/fibe-rails"
       fibe.gg/dockerfile: "Dockerfile"
       fibe.gg/branch: main
-      fibe.gg/source_mount: /rails
       fibe.gg/env_file: env.example
 
   app:
     build: .
+    working_dir: /rails
     depends_on:
       setup:
         condition: service_completed_successfully
@@ -125,7 +126,6 @@ services:
       fibe.gg/visibility: "external"
       fibe.gg/dockerfile: "Dockerfile"
       fibe.gg/branch: main
-      fibe.gg/source_mount: /rails
       fibe.gg/env_file: env.example
       fibe.gg/subdomain: "fibe-rails"
       fibe.gg/zerodowntime: "false"
